@@ -1,0 +1,21 @@
+.col{
+	float: left;
+	padding-left: 20px;
+}
+#img-editor{
+	border: 1px solid #000;
+}
+
+.btn{
+	display: inline-block;
+	margin-left: 10px;
+	text-decoration: none;
+	padding: 0 10px;
+	border-radius: 5px;
+	border: 1px solid red;
+	color: red;
+}
+.btn.disabled{
+	opacity: .5;
+	cursor: not-allowed;
+}

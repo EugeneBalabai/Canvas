@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>Image editor</title>
+	<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+	<div class="col">
+		<div id="tools">
+			<select id="color">
+				<option value="red" selected>red</option>
+				<option value="green">green</option>
+				<option value="black">black</option>
+				<option value="blue">blue</option>
+				<option value="white">white</option>
+				<option value="orange">orange</option>
+			</select>
+			<select id="width">
+				<option value="1" selected>1px</option>
+				<option value="2">2px</option>
+				<option value="3">3px</option>
+				<option value="4">4px</option>
+				<option value="5">5px</option>
+				<option value="6">6px</option>
+			</select>
+			<a href="#" id="clear" title="Clear" class="btn disabled">Clear</a>
+			<a href="#" id="undo" title="undo" Class="btn disabled">Undo</a>
+			<a href="#" id="redo" title="redo" class="btn disabled">Redo</a>
+			<form action="#">
+				<input type="text" placeholder="image name" />
+				<button>Save</button>
+			</form>
+		</div><!-- #tools -->
+		<canvas width="600" height="600" id="img-editor"></canvas>
+	</div><!-- .col -->
+	<div class="col">
+		Saved Image
+		<table>
+			<thead>
+				<tr>
+					<th>Image name</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div><!-- .col -->
+	<script src='main.js'></script>
+</body>
+</html>
