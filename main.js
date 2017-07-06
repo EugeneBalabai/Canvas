@@ -7,10 +7,20 @@
 	const CLEARBTN = document.querySelector('#clear');
 	const FORMSAVE = document.querySelector('form');
 	const TABLESAVEDIMG = document.querySelector('table');
+	const RESIZEELEMENT = document.querySelectorAll('.resize-elem');
 
-	let mousePressed = false;
+	const RESIZEHEIGHT = document.querySelector('.resize-height');
+	const RESIZEWIDTH = document.querySelector('.resize-width');
+	const RESIZEBOTH = document.querySelector('.resize-both');
+
+
+	let mousePressedCanvas = false;
+	let mousePressedResize = false;
+	let resizeOffsetX = 0;
+	let resizeOffsetY = 0;
 	let currentStep = 0;
 	let history = [];
+	
 	let curentImgCommand = [];
 	let currentPath = {color:'',width:'',path:[] };
 	
@@ -150,6 +160,10 @@
 		})
 	}
 
+	function changeCanvasSize(x,y){
+		
+	}
+
 
 	/* */
 	/* events */
@@ -167,14 +181,14 @@
 		e.preventDefault();
 		redo()
 	};
-	FORMSAVE.onsubmit = (e) => {
-		SaveImg();
-	}
+	// FORMSAVE.onsubmit = (e) => {
+	// 	SaveImg();
+	// }
 
 
 	
 	CANVAS.onmousedown = (e) => {
-    mousePressed = true;
+    mousePressedCanvas = true;
     CTX.beginPath();
     let x = e.offsetX, y = e.offsetY;
     CTX.moveTo(x, y)
@@ -185,7 +199,7 @@
 	}
 
 	CANVAS.onmousemove = (e) => {
-    if (mousePressed) {
+    if (mousePressedCanvas) {
       let x = e.offsetX, y = e.offsetY;
       CTX.lineTo(x, y);
       CTX.stroke();
@@ -194,8 +208,8 @@
 	}
 
 	CANVAS.onmouseup = (e) => {
-	  if (mousePressed) {
-			mousePressed = false;
+	  if (mousePressedCanvas) {
+			mousePressedCanvas = false;
 			saveHistory();
 			curentImgCommand.push(currentPath);
 			currentPath = currentPath = {color:'',width:'',path:[] };
@@ -203,12 +217,54 @@
 	}
 
 	CANVAS.onmouseleave = (e) => {
-		if (mousePressed) {
-			mousePressed = false;
+		if (mousePressedCanvas) {
+			mousePressedCanvas = false;
 			saveHistory();
 			curentImgCommand.push(currentPath);
 			currentPath = currentPath = {color:'',width:'',path:[] };
 		}
 	}
+	
+	RESIZEELEMENT.forEach(el => {
+		el.addEventListener("mousedown", ResizePressDown);
+		el.addEventListener("mousemove", ResizeMouseMove);
+		el.addEventListener("mouseup", ResizePressUp);
+		el.addEventListener("mouseleave", ResizePressUp);
+	})
+
+
+
+	function ResizePressDown(e){
+		mousePressedResize = true;
+		resizeOffsetX = e.offsetX;
+		resizeOffsetY = e.offsetY;
+	}
+
+	function ResizeMouseMove(e){
+		if (mousePressedResize) {
+			if(e.target == RESIZEHEIGHT){
+				let x = 0, y = e.offsetY-resizeOffsetY;
+				CANVAS.width += x;
+				CANVAS.height += y;
+			}
+			if (e.target == RESIZEWIDTH) {
+				let x = e.offsetX, y = 0;
+				CANVAS.width += x;
+				CANVAS.height += y;
+			}
+			if (e.target == RESIZEBOTH) {
+				let x = e.offsetX-resizeOffsetX, y = e.offsetY-resizeOffsetY;
+				CANVAS.width += x;
+				CANVAS.height += y;
+			}
+			
+
+		}
+	}
+	function ResizePressUp(e){
+		mousePressedResize = false;
+	}
+
+
 
 // })()

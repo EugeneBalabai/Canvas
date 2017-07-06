@@ -1,11 +1,50 @@
+body,html{
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
 .col{
 	float: left;
 	padding-left: 20px;
 }
-#img-editor{
+canvas{
 	border: 1px solid #000;
 }
+.canvas-wr{
+	margin: 0;
+	padding: 0 5px 5px 0;
+	position: relative;
+	font-size: 0px;
+	display: inline-block;
 
+}
+.canvas-wr .resize-height{
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10;
+	height: 7px;
+	cursor: ns-resize;
+}
+.canvas-wr .resize-width{
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 10;
+	width: 7px;
+	cursor: ew-resize;
+}
+.canvas-wr .resize-both{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	z-index: 15;
+	width: 15px;
+	height: 15px;
+	cursor: nwse-resize;
+}
 .btn{
 	display: inline-block;
 	margin-left: 10px;
