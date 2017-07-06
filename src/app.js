@@ -8,8 +8,8 @@ class ImgEditor{
 		this.variantColors = variantColors;
 		this.variantWidth = variantWidth;
 		this.mousePressedCanvas = false;
-		this.changeWidth = false;
-		this.changeHeight = false;
+		this.changeWidthStatus = false;
+		this.changeHeightStatus = false;
 		this.currentStep = 0;
 		this.history = [];
 		this.resizeOffsetX = 0;
@@ -34,7 +34,6 @@ class ImgEditor{
 		this.areaChangeWidth.classList.add("resize-elem");
 		this.areaChangeWidth.classList.add("resize-width");
 
-
 		this.areaChangeHeight = document.createElement('div');
 		this.areaChangeHeight.classList.add("resize-elem");
 		this.areaChangeHeight.classList.add("resize-height");
@@ -49,7 +48,6 @@ class ImgEditor{
 		document.body.addEventListener("mousemove", this.resizeMove.bind(this) );
 		document.body.addEventListener("mouseup", this.resizePressUp.bind(this) );
 		document.body.addEventListener("mouseleave", this.resizePressUp.bind(this) );
-		
 
 		this.globalWrapper = document.createElement('div');
 		this.globalWrapper.classList.add("img-editor");
@@ -102,12 +100,10 @@ class ImgEditor{
 		this.redoBtn.classList.add("disabled");
 		this.redoBtn.addEventListener('click', this.redo.bind(this))
 
-
 		this.canvasWrapper.appendChild(this.canvas);
 		this.canvasWrapper.appendChild(this.areaChangeWidth);
 		this.canvasWrapper.appendChild(this.areaChangeHeight);
 		this.canvasWrapper.appendChild(this.areaChangeBoth);
-
 
 		this.tools.appendChild(this.changeColor);
 		this.tools.appendChild(this.changeWidth);
@@ -204,35 +200,34 @@ class ImgEditor{
 			this.saveHistory();
 		}
 	}
-
 	resizePressDown(e){
 		this.resizeOffsetX = e.offsetX;
 		this.resizeOffsetY = e.offsetY;
 		if (e.target == this.areaChangeBoth) {
-			this.changeHeight = true;
-			this.changeWidth = true;
+			this.changeHeightStatus = true;
+			this.changeWidthStatus = true;
 		}else if (e.target == this.areaChangeHeight) {
-			this.changeHeight = true;
+			this.changeHeightStatus = true;
 		}else if (e.target == this.areaChangeWidth) {
-			this.changeWidth = true;
+			this.changeWidthStatus = true;
 		}
 		this.tempPng = this.canvas.toDataURL();
 		
 	}
 	resizeMove(e){
-		if (this.changeHeight == true) {
+		if (this.changeHeightStatus) {
 			let y = this.areaChangeBoth.getBoundingClientRect().bottom + pageYOffset - e.pageY - this.resizeOffsetY
 			this.canvas.height -= y;
 		}
-		if (this.changeWidth == true) {
+		if (this.changeWidthStatus) {
 			let x = this.areaChangeBoth.getBoundingClientRect().right + pageXOffset - e.pageX - this.resizeOffsetX
 			this.canvas.width -= x;
 		}
 	}
 	resizePressUp(e){
-		if (this.changeWidth == true || this.changeHeight == true) {
-			this.changeWidth = false;
-			this.changeHeight = false;
+		if (this.changeWidthStatus || this.changeHeightStatus) {
+			this.changeWidthStatus = false;
+			this.changeHeightStatus = false;
 			let histotyImg = new Image();
 			histotyImg.src = this.tempPng;
 			histotyImg.onload = () => {
