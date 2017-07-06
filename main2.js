@@ -114,15 +114,16 @@ class ImgEditor{
 	clearCanvas(){
     	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
-	saveHistory(){
+	saveHistory(draw){
 		++this.currentStep;
 		if ( this.history.length > this.currentStep-1) {
 			this.history.length = this.currentStep-1;
 		}
 		let tempImg = this.canvas.toDataURL();
-		this.history.push(tempImg);
+		let tempObj = {img: tempImg, width: this.canvas.width, height: this.canvas.height}
+		this.history.push(tempObj);
 		this.checkBtnsStatus();
-		
+
 	}
 	drawHistoryImg(){
 		if (!this.currentStep) {
@@ -130,9 +131,11 @@ class ImgEditor{
 			return;
 		}
 		let histotyImg = new Image();
-		histotyImg.src = this.history[this.currentStep-1];
+		histotyImg.src = this.history[this.currentStep-1].img;
 		histotyImg.onload = () => {
 			this.clearCanvas()
+			this.canvas.height = this.history[this.currentStep-1].height;
+			this.canvas.width = this.history[this.currentStep-1].width;
 			this.ctx.drawImage(histotyImg, 0 ,0)
 		}
 	}
@@ -205,6 +208,7 @@ class ImgEditor{
 			this.changeWidth = true;
 		}
 		this.tempPng = this.canvas.toDataURL();
+		
 	}
 	resizeMove(e){
 		if (this.changeHeight == true) {
@@ -220,10 +224,11 @@ class ImgEditor{
 		if (this.changeWidth == true || this.changeHeight == true) {
 			this.changeWidth = false;
 			this.changeHeight = false;
-			let temp = new Image();
-			temp.src = this.tempPng
-			temp.onload = () => {
-				this.ctx.drawImage(temp, 0 ,0)
+			let histotyImg = new Image();
+			histotyImg.src = this.tempPng;
+			histotyImg.onload = () => {
+				this.ctx.drawImage(histotyImg, 0 ,0)
+				this.saveHistory();
 			}
 		}
 	}
