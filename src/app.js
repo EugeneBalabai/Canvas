@@ -46,9 +46,9 @@ class ImgEditor{
 		this.areaChangeWidth.addEventListener("mousedown", this.resizePressDown.bind(this) );
 		this.areaChangeHeight.addEventListener("mousedown", this.resizePressDown.bind(this) );
 		this.areaChangeBoth.addEventListener("mousedown", this.resizePressDown.bind(this) );
-		document.querySelector('html').addEventListener("mousemove", this.resizeMove.bind(this) );
-		document.querySelector('html').addEventListener("mouseup", this.resizePressUp.bind(this) );
-		document.querySelector('html').addEventListener("mouseleave", this.resizePressUp.bind(this) );
+		document.body.addEventListener("mousemove", this.resizeMove.bind(this) );
+		document.body.addEventListener("mouseup", this.resizePressUp.bind(this) );
+		document.body.addEventListener("mouseleave", this.resizePressUp.bind(this) );
 		
 
 		this.globalWrapper = document.createElement('div');
@@ -59,19 +59,25 @@ class ImgEditor{
 
 		this.changeColor = document.createElement('select');
 		this.changeColor.classList.add("change-color");
-		this.variantColors.forEach(color => {
+		this.variantColors.forEach( (color, index) => {
 			let option = document.createElement("option");
 			option.value = color;
 		    option.text = color;
+		    if (!index) {
+		    	option.setAttribute("selected", "selected")
+		    }
 		    this.changeColor.appendChild(option);
 		})
 
 		this.changeWidth = document.createElement('select');
 		this.changeWidth.classList.add("change-width");
-		this.variantWidth.forEach(color => {
+		this.variantWidth.forEach((width, index) => {
 			let option = document.createElement("option");
-			option.value = color;
-		    option.text = color;
+			option.value = width;
+		    option.text = width;
+		    if (!index) {
+		    	option.setAttribute("selected", "selected")
+		    }
 		    this.changeWidth.appendChild(option);
 		})
 
@@ -84,14 +90,14 @@ class ImgEditor{
 
 		this.undoBtn = document.createElement('a');
 		this.undoBtn.href = '#';
-		this.undoBtn.innerText = 'undo'
+		this.undoBtn.innerText = 'Undo'
 		this.undoBtn.classList.add("btn");
 		this.undoBtn.classList.add("disabled");
 		this.undoBtn.addEventListener('click', this.undo.bind(this))
 
 		this.redoBtn = document.createElement('a');
 		this.redoBtn.href = '#';
-		this.redoBtn.innerText = 'redo'
+		this.redoBtn.innerText = 'Redo'
 		this.redoBtn.classList.add("btn");
 		this.redoBtn.classList.add("disabled");
 		this.redoBtn.addEventListener('click', this.redo.bind(this))
@@ -112,7 +118,7 @@ class ImgEditor{
 		this.globalWrapper.appendChild(this.tools);
 		this.globalWrapper.appendChild(this.canvasWrapper);
 
-		document.querySelector('body').appendChild(this.globalWrapper);
+		document.body.appendChild(this.globalWrapper);
 	}
 	clearCanvas(){
     	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

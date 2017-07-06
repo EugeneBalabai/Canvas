@@ -2,9 +2,24 @@ body,html{
 	margin: 0;
 	padding: 0;
 	height: 100%;
+	font-family: sans-serif;
 }
 canvas{
 	border: 1px solid #000;
+	cursor: pointer;
+}
+canvas:active{
+	cursor: crosshair;
+}
+.img-editor{
+	padding-left: 10px;
+	padding-top: 10px;
+}
+.tools{
+	padding-bottom: 10px;
+}
+.change-width{
+	margin-left: 10px;
 }
 .canvas-wr{
 	margin: 0;
@@ -12,7 +27,6 @@ canvas{
 	position: relative;
 	font-size: 0px;
 	display: inline-block;
-
 }
 .canvas-wr .resize-height{
 	position: absolute;
