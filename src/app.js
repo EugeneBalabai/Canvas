@@ -1,3 +1,6 @@
+
+import './style.css'
+
 class ImgEditor{
 	constructor(width, height, variantColors, variantWidth){
 		this.width = width;
@@ -114,7 +117,7 @@ class ImgEditor{
 	clearCanvas(){
     	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
-	saveHistory(draw){
+	saveHistory(){
 		++this.currentStep;
 		if ( this.history.length > this.currentStep-1) {
 			this.history.length = this.currentStep-1;
