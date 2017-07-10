@@ -14,6 +14,9 @@ class ImgEditor{
 		this.history = [];
 		this.resizeOffsetX = 0;
 		this.resizeOffsetY = 0;
+		this.stackOfCommands= [];
+		this.quantityOfCommands = [];
+		this.availableLocalStorage = typeof localStorage !== 'undefined';
 		this.init();
 	}
 	init() {
@@ -100,6 +103,23 @@ class ImgEditor{
 		this.redoBtn.classList.add("disabled");
 		this.redoBtn.addEventListener('click', this.redo.bind(this))
 
+		this.printBtn = document.createElement('a');
+		this.printBtn.href = '#';
+		this.printBtn.innerText = 'Print stack of commands'
+		this.printBtn.classList.add("btn");
+		this.printBtn.classList.add("disabled");
+		this.printBtn.addEventListener('click', this.print.bind(this))
+
+		this.saveBtn = document.createElement('a');
+		this.saveBtn.href = '#';
+		this.saveBtn.innerText = 'Save to LocalStorage'
+		this.saveBtn.classList.add("btn");
+		this.saveBtn.classList.add("disabled");
+		this.saveBtn.addEventListener('click', this.saveToLocalStorage.bind(this))
+
+		this.listOfCommand = document.createElement('ul');
+		this.listOfCommand.classList.add("list-of-command");
+
 		this.canvasWrapper.appendChild(this.canvas);
 		this.canvasWrapper.appendChild(this.areaChangeWidth);
 		this.canvasWrapper.appendChild(this.areaChangeHeight);
@@ -110,17 +130,28 @@ class ImgEditor{
 		this.tools.appendChild(this.clearBtn);
 		this.tools.appendChild(this.undoBtn);
 		this.tools.appendChild(this.redoBtn);
+		this.tools.appendChild(this.printBtn);
+		this.tools.appendChild(this.saveBtn);
 
 		this.globalWrapper.appendChild(this.tools);
 		this.globalWrapper.appendChild(this.canvasWrapper);
+		this.globalWrapper.appendChild(this.listOfCommand);
 
 		document.body.appendChild(this.globalWrapper);
+
+		if (!this.availableLocalStorage) {
+			alert(`Sorry, but your browser does not available Local Storage`);
+			
+		}else{
+			localStorage.removeItem('stackOfCommand')
+		}
 	}
 	clearCanvas(){
     	this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 	saveHistory(){
 		++this.currentStep;
+		this.quantityOfCommands.push(this.stackOfCommands.length)
 		if ( this.history.length > this.currentStep-1) {
 			this.history.length = this.currentStep-1;
 		}
@@ -143,6 +174,7 @@ class ImgEditor{
 			this.canvas.width = this.history[this.currentStep-1].width;
 			this.ctx.drawImage(histotyImg, 0 ,0)
 		}
+
 	}
 	checkBtnsStatus(){
 		if (this.currentStep > 0) {
@@ -156,6 +188,13 @@ class ImgEditor{
 		}else{
 			this.redoBtn.classList.add("disabled");
 		}
+		if( this.printBtn.classList.contains('disabled') ){
+			this.printBtn.classList.remove("disabled");
+		}
+		if( this.saveBtn.classList.contains('disabled') ){
+			this.saveBtn.classList.remove("disabled");
+		}
+		
 	}
 	undo(e){
 		e.preventDefault();
@@ -175,29 +214,39 @@ class ImgEditor{
 	}
 	clear(e){
 		e.preventDefault();
+		this.stackOfCommands.push(`clearRect(0, 0, ${this.canvas.width}, ${this.canvas.height})`);
 		this.clearCanvas();
 		this.saveHistory();
-		this.clearBtn.classList.add("disabled");
+		
 	}
 	startDraw(e){
 		this.mousePressedCanvas = true;
 	    this.ctx.beginPath();
 	    let x = e.offsetX, y = e.offsetY;
-	    this.ctx.moveTo(x, y)
-	    this.ctx.lineWidth = this.changeWidth.value;
-	    this.ctx.strokeStyle = this.changeColor.value;
+	    let width = this.changeWidth.value;
+	    let color = this.changeColor.value;
+	    this.ctx.moveTo(x, y);
+	    this.ctx.lineWidth = width;
+	    this.ctx.strokeStyle = color;
+	    this.stackOfCommands.push('beginPath()');
+	    this.stackOfCommands.push(`moveTo(${x}, ${y})`);
+	    this.stackOfCommands.push(`lineWidth = ${width}`);
+	    this.stackOfCommands.push(`strokeStyle = ${color}`);
 	}
 	drawing(e){
 		if (this.mousePressedCanvas) {
 	      let x = e.offsetX, y = e.offsetY;
 	      this.ctx.lineTo(x, y);
 	      this.ctx.stroke();
+	      this.stackOfCommands.push(`lineTo(${x}, ${y})`);
+	      this.stackOfCommands.push('stroke()');
 	    }
 	}
 	endDraw(e){
 		if (this.mousePressedCanvas) {
 			this.mousePressedCanvas = false;
 			this.saveHistory();
+
 		}
 	}
 	resizePressDown(e){
@@ -235,6 +284,27 @@ class ImgEditor{
 				this.saveHistory();
 			}
 		}
+	}
+	saveToLocalStorage(e){
+		e.preventDefault();
+		let temp = this.quantityOfCommands[this.currentStep-1] || 0; //количество комманд на текущем шаге
+		let tempStack = this.stackOfCommands;
+		tempStack.length = temp;
+		localStorage.setItem('stackOfCommand', JSON.stringify(tempStack));
+	}
+	print(e){
+		e.preventDefault();
+		if (!this.availableLocalStorage) {
+			alert('Sorry, but your browser does not available Local Storage')
+			return;
+		}
+		let arrayCommand = JSON.parse(localStorage.getItem('stackOfCommand'));
+		this.listOfCommand.innerHTML = '';
+		while(arrayCommand.length){
+			let itemList = document.createElement('li');
+			itemList.innerText = arrayCommand.pop();
+			this.listOfCommand.appendChild(itemList);
+		}		
 	}
 
 };
